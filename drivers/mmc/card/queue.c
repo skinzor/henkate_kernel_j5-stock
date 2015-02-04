@@ -60,6 +60,8 @@ static int mmc_queue_thread(void *d)
 	struct mmc_card *card = mq->card;
 
 	current->flags |= PF_MEMALLOC;
+	if (card->host->wakeup_on_idle)
+		set_wake_up_idle(true);
 
 #if defined(CONFIG_ARCH_MSM8939)|| defined (CONFIG_ARCH_MSM8929)
        set_cpus_allowed_ptr(current, cpumask_of(4));
