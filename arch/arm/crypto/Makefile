@@ -11,7 +11,10 @@ aes-arm-y  := aes-armv4.o aes_glue.o
 sha1-arm-y := sha1-armv4-large.o sha1_glue.o
 sha1-arm-ce-y	:= sha1-ce-core.o sha1-ce-glue.o
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 7179dab... crypto: arm - add support for SHA-224/256 using ARMv8 Crypto Extensions
 sha2-arm-ce-y	:= sha2-ce-core.o sha2-ce-glue.o
 
 quiet_cmd_perl = PERL    $@
