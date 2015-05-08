@@ -300,6 +300,11 @@ static int mdss_mdp_rotator_queue_sub(struct mdss_mdp_rotator_session *rot,
 	ATRACE_END("rotator_kickoff");
 	MDSS_XLOG(rot->session_id);
 	if (ret) {
+		pr_err("mdss_mdp_rotator_kickoff error : %d\n", ret);
+		goto error;
+	}
+
+	if (ret) {
 		pr_err("unable to kickoff rot data\n");
 		goto error;
 	}
