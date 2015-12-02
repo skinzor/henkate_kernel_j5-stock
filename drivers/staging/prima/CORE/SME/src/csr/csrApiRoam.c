@@ -265,9 +265,13 @@ void csrRoamReissueRoamCommand(tpAniSirGlobal pMac);
 #ifdef FEATURE_WLAN_BTAMP_UT_RF
 void csrRoamJoinRetryTimerHandler(void *pv);
 #endif
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_TDLS
 void limInitOperatingClasses( tHalHandle hHal );
 #endif
+=======
+void limInitOperatingClasses( tHalHandle hHal );
+>>>>>>> cffb1cf... staging: Import WLAN Driver from CAF
 extern void SysProcessMmhMsg(tpAniSirGlobal pMac, tSirMsgQ* pMsg);
 extern void btampEstablishLogLinkHdlr(void* pMsg);
 static void csrSerDesUnpackDiassocRsp(tANI_U8 *pBuf, tSirSmeDisassocRsp *pRsp);
@@ -438,9 +442,13 @@ eHalStatus csrInitChannelsForCC(tpAniSirGlobal pMac, driver_load_type init)
             pMac->scan.domainIdDefault = regId;
             break;
         case REINIT:
+<<<<<<< HEAD
 #ifdef CONFIG_ENABLE_LINUX_REG
             vos_getCurrentCountryCode(&cc[0]);
 #endif
+=======
+            vos_getCurrentCountryCode(&cc[0]);
+>>>>>>> cffb1cf... staging: Import WLAN Driver from CAF
             status = csrGetRegulatoryDomainForCountry(pMac,
                      cc, &regId, COUNTRY_QUERY);
             break;
@@ -560,9 +568,13 @@ eHalStatus csrUpdateChannelList(tpAniSirGlobal pMac)
     vos_msg_t msg;
     tANI_U8 i;
 
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_TDLS
     limInitOperatingClasses((tHalHandle)pMac);
 #endif
+=======
+    limInitOperatingClasses((tHalHandle)pMac);
+>>>>>>> cffb1cf... staging: Import WLAN Driver from CAF
     numChan = sizeof(pMac->roam.validChannelList);
 
     if ( !HAL_STATUS_SUCCESS(csrGetCfgValidChannels(pMac,
@@ -2309,9 +2321,13 @@ eHalStatus csrInitChannelList( tHalHandle hHal )
     csrSaveChannelPowerForBand(pMac, eANI_BOOLEAN_TRUE);
     // Apply the base channel list, power info, and set the Country code...
     csrApplyChannelPowerCountryInfo( pMac, &pMac->scan.base20MHzChannels, pMac->scan.countryCodeCurrent, eANI_BOOLEAN_TRUE );
+<<<<<<< HEAD
 #ifdef FEATURE_WLAN_TDLS
     limInitOperatingClasses(hHal);
 #endif
+=======
+    limInitOperatingClasses(hHal);
+>>>>>>> cffb1cf... staging: Import WLAN Driver from CAF
     return (status);
 }
 eHalStatus csrChangeConfigParams(tpAniSirGlobal pMac, 
