@@ -1334,12 +1334,14 @@ if (rq->nr_running >= 2) {
 #endif
 
 #ifdef CONFIG_NO_HZ_FULL
+
 		if (tick_nohz_full_cpu(rq->cpu)) {
 			/* Order rq->nr_running write against the IPI */
 			smp_wmb();
 			smp_send_reschedule(rq->cpu);
 		}
 #endif
+	}
 }
 
 static inline void dec_nr_running(struct rq *rq)
@@ -1636,3 +1638,16 @@ static inline u64 irq_time_read(int cpu)
 }
 #endif /* CONFIG_64BIT */
 #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+
+static inline void account_reset_rq(struct rq *rq)
+{
+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+	rq->prev_irq_time = 0;
+#endif
+#ifdef CONFIG_PARAVIRT
+	rq->prev_steal_time = 0;
+#endif
+#ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+	rq->prev_steal_time_rq = 0;
+#endif
+}
