@@ -24,10 +24,6 @@
 
 #include "mdss_dsi.h"
 
-#ifdef CONFIG_POWERSUSPEND
-#include <linux/powersuspend.h>
-#endif
-
 #if defined(CONFIG_FB_MSM_MDSS_SAMSUNG)
 #include "mdss_debug.h"
 #include "samsung/ss_dsi_panel_common.h"
@@ -696,9 +692,6 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		return -EINVAL;
 	}
 
-#ifdef CONFIG_POWERSUSPEND
-        set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
-#endif
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -755,9 +748,6 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 		return -EINVAL;
 	}
 
-#ifdef CONFIG_POWERSUSPEND
-        set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
-#endif
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
