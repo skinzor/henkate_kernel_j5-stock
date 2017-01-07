@@ -1,4 +1,3 @@
-in_slab = &memblock_reserved_in_slab;
 /*
  * Procedures for maintaining information about logical memory blocks.
  *
@@ -216,12 +215,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	new_alloc_size = PAGE_ALIGN(new_size);
 
 	/* Retrieve the slab flag */
-	if (type == &memblock.memory)
-		in_slab = &memblock_memory_in_slab;
-	else
-		in_slab = &memblock_reserved_in_slab;
-
-    /* Retrieve the slab flag */
 	if (type == &memblock.memory)
 		in_slab = &memblock_memory_in_slab;
 	else
