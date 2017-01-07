@@ -198,7 +198,7 @@ static ssize_t hotplug_disable_show(struct kobject *kobj,
 
 static struct kobj_attribute hotplug_disabled_attr = __ATTR_RO(hotplug_disable);
 
-+#ifdef CONFIG_BRICKED_HOTPLUG
+#ifdef CONFIG_BRICKED_HOTPLUG
 unsigned int get_rq_info(void)
 {
  unsigned long flags = 0;
