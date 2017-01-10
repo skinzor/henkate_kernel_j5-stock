@@ -18,15 +18,23 @@
 #include <linux/powersuspend.h>
 #endif
 
+/* Chill version macros */
+#define CHILL_VERSION_MAJOR			(2)
+#define CHILL_VERSION_MINOR			(7)
+
+
 /* Chill governor macros */
-#define DEF_FREQUENCY_UP_THRESHOLD		(80)
-#define DEF_FREQUENCY_DOWN_THRESHOLD		(20)
-#define DEF_FREQUENCY_DOWN_THRESHOLD_SUSPENDED	(20)
+#define DEF_FREQUENCY_UP_THRESHOLD		(85)
+#define DEF_FREQUENCY_DOWN_THRESHOLD		(35)
+#define DEF_FREQUENCY_DOWN_THRESHOLD_SUSPENDED	(45)
 #define DEF_FREQUENCY_STEP			(5)
-#define DEF_SLEEP_DEPTH			(1)
-#define DEF_SAMPLING_RATE		(20000)
+#define DEF_SAMPLING_RATE			(20000)
+#define DEF_BOOST_ENABLED			(1)
+#define DEF_BOOST_COUNT				(8)
 
 static DEFINE_PER_CPU(struct cs_cpu_dbs_info_s, cs_cpu_dbs_info);
+
+unsigned int boost_counter = 0;
 
 static inline unsigned int get_freq_target(struct cs_dbs_tuners *cs_tuners,
 					   struct cpufreq_policy *policy)
@@ -56,6 +64,11 @@ static void cs_check_cpu(int cpu, unsigned int load)
 	struct dbs_data *dbs_data = policy->governor_data;
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
 
+#ifdef CONFIG_POWERSUSPEND
+	/* Once min frequency is reached while screen off, stop taking load samples*/
+	if (power_suspended && policy->cur == policy->min)
+		return;
+#endif
 	/*
 	 * break out if we 'cannot' reduce the speed as the user might
 	 * want freq_step to be zero
@@ -63,28 +76,53 @@ static void cs_check_cpu(int cpu, unsigned int load)
 	if (cs_tuners->freq_step == 0)
 		return;
 
-	/* Check for frequency increase */
-	if (load > cs_tuners->up_threshold) {
-
-		/* if we are already at full speed then break out early */
-		if (dbs_info->requested_freq == policy->max)
-			return;
 
 #ifdef CONFIG_POWERSUSPEND
-		/* if power is suspended then break out early */
-		if (power_suspended)
+	/* Check for frequency decrease */
+	if (!power_suspended && load < cs_tuners->down_threshold) {
+		unsigned int freq_target;
+		/*
+		 * if we cannot reduce the frequency anymore, break out early
+		 */
+		if (policy->cur == policy->min)
 			return;
-#endif
 
-		dbs_info->requested_freq += get_freq_target(cs_tuners, policy);
+		/* reduce boost count with frequency */
+		if (boost_counter < 0)
+			boost_counter--;
 
-		if (dbs_info->requested_freq > policy->max)
-			dbs_info->requested_freq = policy->max;
+		freq_target = get_freq_target(cs_tuners, policy);
+		if (dbs_info->requested_freq > freq_target)
+			dbs_info->requested_freq -= freq_target;
+		else {
+			dbs_info->requested_freq = policy->min;
+			boost_counter = 0;
+		}
+		__cpufreq_driver_target(policy, dbs_info->requested_freq,
+				CPUFREQ_RELATION_L);
+		return;
+	} else if (power_suspended && load <= cs_tuners->down_threshold_suspended) {
+		unsigned int freq_target;
+		/*
+		 * if we cannot reduce the frequency anymore, break out early
+		 */
+		if (policy->cur == policy->min)
+			return;
+
+		freq_target = get_freq_target(cs_tuners, policy);
+		if (dbs_info->requested_freq > freq_target)
+			dbs_info->requested_freq -= freq_target;
+		else {
+			dbs_info->requested_freq = policy->min;
+			boost_counter = 0;
+		}
 
 		__cpufreq_driver_target(policy, dbs_info->requested_freq,
-			CPUFREQ_RELATION_H);
+				CPUFREQ_RELATION_L);
 		return;
 	}
+
+#else
 
 	/* Check for frequency decrease */
 	if (load < cs_tuners->down_threshold) {
@@ -105,6 +143,35 @@ static void cs_check_cpu(int cpu, unsigned int load)
 				CPUFREQ_RELATION_L);
 		return;
 	}
+#endif
+
+	/* Check for frequency increase */
+	if (load > cs_tuners->up_threshold) {
+
+		/* if we are already at full speed then break out early */
+		if (dbs_info->requested_freq == policy->max)
+			return;
+
+#ifdef CONFIG_POWERSUSPEND
+		/* if power is suspended then break out early */
+		if (power_suspended)
+			return;
+#endif
+
+		/* Boost if count is reached, otherwise increase freq */
+		if (cs_tuners->boost_enabled && boost_counter >= cs_tuners->boost_count) {
+			dbs_info->requested_freq = policy->max;
+			boost_counter = 0;
+		} else {
+			dbs_info->requested_freq += get_freq_target(cs_tuners, policy);
+
+			boost_counter++;
+                };
+
+		__cpufreq_driver_target(policy, dbs_info->requested_freq,
+			CPUFREQ_RELATION_H);
+		return;
+	}
 }
 
 static void cs_dbs_timer(struct work_struct *work)
@@ -118,17 +185,12 @@ static void cs_dbs_timer(struct work_struct *work)
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
 	int delay = delay_for_sampling_rate(cs_tuners->sampling_rate);
 	bool modify_all = true;
-	unsigned int sampling_rate_suspended = cs_tuners->sampling_rate * cs_tuners->sleep_depth;
 
 	mutex_lock(&core_dbs_info->cdbs.timer_mutex);
 
 	if (!need_load_eval(&core_dbs_info->cdbs, cs_tuners->sampling_rate))
 		modify_all = false;
-#ifdef CONFIG_POWERSUSPEND
-	else if (power_suspended && need_load_eval(&core_dbs_info->cdbs, sampling_rate_suspended))
-#else
 	else
-#endif
 			dbs_check_cpu(dbs_data, cpu);
 
 	gov_queue_work(dbs_data, dbs_info->cdbs.cur_policy, delay, modify_all);
@@ -280,7 +342,7 @@ static ssize_t store_freq_step(struct dbs_data *dbs_data, const char *buf,
 	return count;
 }
 
-static ssize_t store_sleep_depth(struct dbs_data *dbs_data, const char *buf,
+static ssize_t store_boost_enabled(struct dbs_data *dbs_data, const char *buf,
 		size_t count)
 {
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
@@ -291,10 +353,30 @@ static ssize_t store_sleep_depth(struct dbs_data *dbs_data, const char *buf,
 	if (ret != 1)
 		return -EINVAL;
 
-	if (input > 5)
-		input = 5;
+	if (input >= 1)
+		input = 1;
+	else
+		input = 0;
 
-	cs_tuners->sleep_depth = input;
+	cs_tuners->boost_enabled = input;
+	return count;
+}
+
+static ssize_t store_boost_count(struct dbs_data *dbs_data, const char *buf,
+		size_t count)
+{
+	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+
+	if (ret != 1)
+		return -EINVAL;
+
+	if (input < 1)
+		input = 0;
+
+	cs_tuners->boost_count = input;
 	return count;
 }
 
@@ -304,8 +386,8 @@ show_store_one(cs, down_threshold);
 show_store_one(cs, down_threshold_suspended);
 show_store_one(cs, ignore_nice_load);
 show_store_one(cs, freq_step);
-declare_show_sampling_rate_min(cs);
-show_store_one(cs, sleep_depth);
+show_store_one(cs, boost_enabled);
+show_store_one(cs, boost_count);
 
 gov_sys_pol_attr_rw(sampling_rate);
 gov_sys_pol_attr_rw(up_threshold);
@@ -313,18 +395,18 @@ gov_sys_pol_attr_rw(down_threshold);
 gov_sys_pol_attr_rw(down_threshold_suspended);
 gov_sys_pol_attr_rw(ignore_nice_load);
 gov_sys_pol_attr_rw(freq_step);
-gov_sys_pol_attr_ro(sampling_rate_min);
-gov_sys_pol_attr_rw(sleep_depth);
+gov_sys_pol_attr_rw(boost_enabled);
+gov_sys_pol_attr_rw(boost_count);
 
 static struct attribute *dbs_attributes_gov_sys[] = {
-	&sampling_rate_min_gov_sys.attr,
 	&sampling_rate_gov_sys.attr,
 	&up_threshold_gov_sys.attr,
 	&down_threshold_gov_sys.attr,
 	&down_threshold_suspended_gov_sys.attr,
 	&ignore_nice_load_gov_sys.attr,
 	&freq_step_gov_sys.attr,
-	&sleep_depth_gov_sys.attr,
+	&boost_enabled_gov_sys.attr,
+	&boost_count_gov_sys.attr,
 	NULL
 };
 
@@ -334,14 +416,14 @@ static struct attribute_group cs_attr_group_gov_sys = {
 };
 
 static struct attribute *dbs_attributes_gov_pol[] = {
-	&sampling_rate_min_gov_pol.attr,
 	&sampling_rate_gov_pol.attr,
 	&up_threshold_gov_pol.attr,
 	&down_threshold_gov_pol.attr,
 	&down_threshold_suspended_gov_pol.attr,
 	&ignore_nice_load_gov_pol.attr,
 	&freq_step_gov_pol.attr,
-	&sleep_depth_gov_pol.attr,
+	&boost_enabled_gov_pol.attr,
+	&boost_count_gov_pol.attr,
 	NULL
 };
 
@@ -367,7 +449,8 @@ static int cs_init(struct dbs_data *dbs_data)
 	tuners->down_threshold_suspended = DEF_FREQUENCY_DOWN_THRESHOLD_SUSPENDED;
 	tuners->ignore_nice_load = 0;
 	tuners->freq_step = DEF_FREQUENCY_STEP;
-	tuners->sleep_depth = DEF_SLEEP_DEPTH;
+	tuners->boost_enabled = DEF_BOOST_ENABLED;
+	tuners->boost_count = DEF_BOOST_COUNT;
 
 	dbs_data->tuners = tuners;
 	dbs_data->min_sampling_rate = DEF_SAMPLING_RATE;
@@ -391,7 +474,7 @@ static struct cs_ops cs_ops = {
 };
 
 static struct common_dbs_data cs_dbs_cdata = {
-	.governor = 1,
+	.governor = GOV_cs,
 	.attr_group_gov_sys = &cs_attr_group_gov_sys,
 	.attr_group_gov_pol = &cs_attr_group_gov_pol,
 	.get_cpu_cdbs = get_cpu_cdbs,
