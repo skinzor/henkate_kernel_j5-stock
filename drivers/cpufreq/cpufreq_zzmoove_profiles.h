@@ -424,7 +424,6 @@ struct zzmoove_profile zzmoove_profiles[] = {
 #endif /* defined(CONFIG_HAS_EARLYSUSPEND)... */
 #endif /* ENABLE_HOTPLUGGING */
 		40,		// down_threshold (range from 11 to 100 and must be lower than up_threshold)
- #ifdef ENABLE_HOTPLUGGING
 #ifdef ENABLE_HOTPLUGGING
 		65,		// down_threshold_hotplug1
 #if (MAX_CORES == 4 || MAX_CORES == 6 || MAX_CORES == 8)
