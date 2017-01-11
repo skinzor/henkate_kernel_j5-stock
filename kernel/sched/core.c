@@ -4452,8 +4452,8 @@ void scheduler_tick(void)
 	raw_spin_lock(&rq->lock);
 	set_window_start(rq);
 	update_rq_clock(rq);
-	update_cpu_load_active(rq);
 	curr->sched_class->task_tick(rq, curr, 0);
+	update_cpu_load_active(rq);
 	update_task_ravg(rq->curr, rq, TASK_UPDATE, sched_clock(), 0);
 	raw_spin_unlock(&rq->lock);
 
