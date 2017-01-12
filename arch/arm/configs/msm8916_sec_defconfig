@@ -115,8 +115,6 @@ CONFIG_UKSM=y
 CONFIG_CLEANCACHE=y
 # CONFIG_ZCACHE is not set
 
-=======
->>>>>>> parent of 14cf784... usb: add Fast Charging
 
 #
 # Qualcomm Atheros Prima WLAN module
