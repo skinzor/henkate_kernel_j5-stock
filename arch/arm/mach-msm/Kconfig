@@ -1365,11 +1365,4 @@ config RTC_AUTO_PWRON_PARAM
           This option is used to prevent invalid RTC alarm power on.
           Say Y if you want to enable this feature.
 
-config FORCE_FAST_CHARGE
-	bool "Force faster charge rate for AC/USB"
-	default y
-	help
-	  This allows users to override default charge rate for both USB and AC
-	  charger input current
-
 endif
