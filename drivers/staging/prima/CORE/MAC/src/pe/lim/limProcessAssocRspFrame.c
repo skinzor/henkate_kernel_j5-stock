@@ -470,15 +470,10 @@ limProcessAssocRspFrame(tpAniSirGlobal pMac, tANI_U8 *pRxPacketInfo, tANI_U8 sub
     if(pAssocRsp->ExtCap.present)
     {
         limLog(pMac, LOGE, FL("Filling tdls prohibited in session entry"));
-<<<<<<< HEAD
 #ifdef FEATURE_WLAN_TDLS
         psessionEntry->tdlsChanSwitProhibited =
                        pAssocRsp->ExtCap.TDLSChanSwitProhibited ;
 #endif
-=======
-        psessionEntry->tdlsChanSwitProhibited =
-                       pAssocRsp->ExtCap.TDLSChanSwitProhibited ;
->>>>>>> cffb1cf... staging: Import WLAN Driver from CAF
     }
     if(!pAssocRsp->suppRatesPresent)
     {
