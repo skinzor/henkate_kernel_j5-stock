@@ -164,9 +164,9 @@ static int is_full_zero(const void *s1, size_t len)
 
 #endif
 #else
-static int is_full_zero(const void *s1, size_t len)
+static int is_full_zero(void *s1, size_t len)
 {
-	const unsigned long *src = s1;
+	unsigned long *src = s1;
 	int i;
 
 	len /= sizeof(*src);
@@ -4714,7 +4714,7 @@ out:
 	return referenced;
 }
 
-int try_to_unmap_ksm(struct page *page, enum ttu_flags flags, struct vm_area_struct *target_vma)
+int try_to_unmap_ksm(struct page *page, enum ttu_flags flags)
 {
 	struct stable_node *stable_node;
 	struct node_vma *node_vma;
