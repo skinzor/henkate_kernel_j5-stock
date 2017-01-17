@@ -901,6 +901,7 @@ static void msm_rpm_smd_work(struct work_struct *work)
 
 	while (1) {
 		wait_for_completion(&data_ready);
+                wait_for_completion_interruptible(&data_ready);
 
 		spin_lock(&msm_rpm_data.smd_lock_read);
 		while (smd_is_pkt_avail(msm_rpm_data.ch_info)) {
