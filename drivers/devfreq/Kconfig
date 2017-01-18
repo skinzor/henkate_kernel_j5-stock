@@ -122,7 +122,7 @@ config DEVFREQ_GOV_MSM_CPUFREQ
 	  MSM GPU governor for GPU bus bandwidth voting.
 	  This governor works together with MSM Adreno Trustzone governor,
 	  and select bus frequency votes using an "on-demand" alorithm..
-This governor is unlikely to be useful for non-MSM devices.
+          This governor is unlikely to be useful for non-MSM devices.
 
 config DEVFREQ_GOV_MSM_BW_HWMON
 	tristate "HW monitor based governor for device BW"
