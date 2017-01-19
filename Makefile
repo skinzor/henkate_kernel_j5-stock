@@ -350,7 +350,6 @@ KERNELFLAGS	= -O3 -DNDEBUG -munaligned-access -fgcse-lm -fgcse-sm -fsched-spec-l
 
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
-<<<<<<< HEAD
 LDFLAGS_MODULE  =
 CFLAGS_KERNEL	= -marm -ffast-math -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
 
@@ -359,11 +358,9 @@ CFLAGS_KERNEL += -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -
 endif
 
 AFLAGS_KERNEL	= -marm -ffast-math -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
-=======
 LDFLAGS_MODULE  = --strip-debug
 CFLAGS_KERNEL	=
 AFLAGS_KERNEL	=
->>>>>>> 1963b3e... Implement qcom's prima wlan
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
