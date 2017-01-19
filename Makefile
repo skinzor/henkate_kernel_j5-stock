@@ -351,13 +351,13 @@ KERNELFLAGS	= -O3 -DNDEBUG -munaligned-access -fgcse-lm -fgcse-sm -fsched-spec-l
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -mtune=cortex-a53 -marm -ffast-math -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
+CFLAGS_KERNEL	= -marm -ffast-math -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
 
 ifdef CONFIG_CC_GRAPHITE_OPTIMIZATION
 CFLAGS_KERNEL += -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block
 endif
 
-AFLAGS_KERNEL	= -mtune=cortex-a53 -marm -ffast-math -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
+AFLAGS_KERNEL	= -marm -ffast-math -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
