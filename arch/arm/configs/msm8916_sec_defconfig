@@ -756,6 +756,6 @@ CONFIG_SEC_RESTRICT_FORK=y
 CONFIG_SEC_RESTRICT_ROOTING_LOG=y
 
 #TZ ICCC defines
-CONFIG_TZ_ICCC=y
+# CONFIG_TZ_ICCC is not set
 
 ##############################################################################
