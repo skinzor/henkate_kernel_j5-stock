@@ -2459,7 +2459,7 @@ static int fg_probe(struct spmi_device *spmi)
 		}
 	}
 
-	schedule_delayed_work(
+	queue_delayed_work(system_power_efficient_wq,
 		&chip->update_jeita_setting,
 		msecs_to_jiffies(INIT_JEITA_DELAY_MS));
 
