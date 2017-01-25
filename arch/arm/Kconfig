@@ -943,6 +943,13 @@ config ARCH_MULTI_CPU_AUTO
 	def_bool !(ARCH_MULTI_V4 || ARCH_MULTI_V4T || ARCH_MULTI_V6_V7)
 	select ARCH_MULTI_V5
 
+config KERNEL_MODE_NEON
+	bool "Support for NEON in kernel mode"
+	default n
+	depends on NEON
+	help
+	  Say Y to include support for NEON in kernel mode.
+
 endmenu
 
 #
