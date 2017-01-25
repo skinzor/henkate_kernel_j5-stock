@@ -843,9 +843,9 @@ static int __init alucard_hotplug_init(void)
 		{652800, 0}
 #else
 		{0, 1190400},
-		{533333, 1190400},
-		{533333, 1190400},
-		{533333, 0}
+		{800000, 1190400},
+		{800000, 1190400},
+		{800000, 0}
 #endif
 	};
 	unsigned int hotplug_load[NR_CPUS][2] = {
