@@ -351,14 +351,9 @@ KERNEL_FLAGS = -O3 -munaligned-access -fgcse-sm -fgcse-las -fsched-spec-load -ff
 MOD_FLAGS = -DMODULE $(KERNEL_FLAGS)
 CFLAGS_MODULE   = $(MODFLAGS)
 AFLAGS_MODULE   = $(MODFLAGS)
-LDFLAGS_MODULE  =
+LDFLAGS_MODULE  = --strip-debug
 CFLAGS_KERNEL	= $(MODFLAGS)
 AFLAGS_KERNEL	= $(MODFLAGS)
-CFLAGS_MODULE   =
-AFLAGS_MODULE   =
-LDFLAGS_MODULE  = --strip-debug
-CFLAGS_KERNEL	=
-AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
