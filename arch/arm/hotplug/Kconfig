@@ -18,12 +18,6 @@ config ALUCARD_HOTPLUG
  	help
  	  Generic Alucard-hotplug cpu hotplug driver for ARM SOCs
 
-config MSM_SLEEPER
- 	bool "CPU hotplug driver"
- 	default y
- 	help
- 	  CPU hotplug driver
-
 config INTELLI_PLUG
  	bool "Hotplug for Razor Reborn"
  	depends on MSM_RUN_QUEUE_STATS
