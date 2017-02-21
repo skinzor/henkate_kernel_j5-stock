@@ -1,4 +1,3 @@
-in_slab = &memblock_reserved_in_slab;
 /*
  * Procedures for maintaining information about logical memory blocks.
  *
@@ -221,13 +220,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	else
 		in_slab = &memblock_reserved_in_slab;
 
-    /* Retrieve the slab flag */
-	if (type == &memblock.memory)
-		in_slab = &memblock_memory_in_slab;
-	else
-		in_slab = &memblock_reserved_in_slab;
-
-
 	/* Try to find some space for it.
 	 *
 	 * WARNING: We assume that either slab_is_available() and we use it or
@@ -291,15 +283,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	 */
 	if (!use_slab)
 		BUG_ON(memblock_reserve(addr, new_alloc_size));
-
-	/* Update slab flag */
-	*in_slab = use_slab;
-
-    /* Reserve the new array if that comes from the memblock.
-	 * Otherwise, we needn't do it
-	 */
-	if (!use_slab)
-		BUG_ON(memblock_reserve(addr, new_size));
 
 	/* Update slab flag */
 	*in_slab = use_slab;
