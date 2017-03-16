@@ -45,7 +45,7 @@ static char klog_buf[256];
 #define CONFIG_LOGCAT_SIZE 256
 #endif
 
-static unsigned int enabled = 1;
+static unsigned int enabled = 0;
 module_param(enabled, uint, S_IWUSR | S_IRUGO);
 
 /**
