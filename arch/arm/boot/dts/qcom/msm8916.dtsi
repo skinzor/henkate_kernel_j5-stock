@@ -317,7 +317,11 @@
 			<  998400000 5>,
 			< 1094400000 6>,
 			< 1152000000 7>,
-			< 1209600000 8>;
+			< 1209600000 8>,
+			< 1363200000 9>,
+			< 1401600000 10>,
+			< 1497600000 11>,
+			< 1881600000 12>;
 
 		qcom,speed1-bin-v0 =
 			<          0 0>,
@@ -339,7 +343,9 @@
 			<  762 /* 100 MHz */>,
 			< 1525 /* 200 MHz */>,
 			< 3051 /* 400 MHz */>,
-			< 4066 /* 533 MHz */>;
+			< 4066 /* 533 MHz */>,
+			< 4066 /* 667 MHz */>,
+			< 6102 /* 800 MHz */>;
 		qcom,ab-percent = < 30 >;
 	};
 
@@ -356,7 +362,9 @@
 				 <  400000  762>,
 				 <  800000  1525>,
 				 < 1094400  3051>,
-				 < 1152000  4066>;
+				 < 1152000  4066>,
+				 < 1401600  4066>,
+				 < 1881600  6102>;
 		};
 	};
 
@@ -371,7 +379,11 @@
 			 <  998400 >,
 			 < 1094400 >,
 			 < 1152000 >,
-			 < 1209600 >;
+			 < 1209600 >,
+			 < 1363200 >,
+			 < 1401600 >,
+			 < 1497600 >,
+			 < 1881600 >;
 	};
 
 	qcom,sps {
@@ -613,7 +625,7 @@
 			 <&clock_gcc clk_gcc_sdcc1_apps_clk>;
 		clock-names = "iface_clk", "core_clk";
 
-		qcom,clk-rates = <400000 25000000 50000000 100000000 177770000>;
+		qcom,clk-rates = <400000 25000000 50000000 100000000 200000000>;
 		qcom,bus-speed-mode = "HS200_1p8v", "DDR_1p8v";
 
 		status = "disabled";
@@ -1400,7 +1412,7 @@
 		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
 			 <&clock_gcc clk_gcc_blsp1_qup2_i2c_apps_clk>;
 		clock-names = "iface_clk", "core_clk";
-		qcom,clk-freq-out = <100000>;
+		qcom,clk-freq-out = <400000>;
 		qcom,clk-freq-in  = <19200000>;
 		pinctrl-names = "i2c_active", "i2c_sleep";
 		pinctrl-0 = <&i2c_0_active>;
@@ -1424,7 +1436,7 @@
 		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
 			 <&clock_gcc clk_gcc_blsp1_qup5_i2c_apps_clk>;
 		clock-names = "iface_clk", "core_clk";
-		qcom,clk-freq-out = <100000>;
+		qcom,clk-freq-out = <400000>;
 		qcom,clk-freq-in  = <19200000>;
 		pinctrl-names = "i2c_active", "i2c_sleep";
 		pinctrl-0 = <&i2c_5_active>;
